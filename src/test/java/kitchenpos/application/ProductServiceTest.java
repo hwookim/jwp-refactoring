@@ -1,12 +1,13 @@
 package kitchenpos.application;
 
 import static kitchenpos.Fixture.PRODUCT1;
-import static kitchenpos.Fixture.PRODUCTS;
+import static kitchenpos.Fixture.PRODUCT2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
@@ -55,7 +56,7 @@ class ProductServiceTest {
     @DisplayName("전체 상품 조회")
     @Test
     void list() {
-        given(productDao.findAll()).willReturn(PRODUCTS);
+        given(productDao.findAll()).willReturn(Arrays.asList(PRODUCT1, PRODUCT2));
         List<Product> products = productService.list();
 
         assertThat(products).hasSize(2);

@@ -2,7 +2,6 @@ package kitchenpos;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -19,7 +18,6 @@ public class Fixture {
         .name("치즈치킨")
         .price(BigDecimal.valueOf(17_000))
         .build();
-    public static final List<Product> PRODUCTS = Arrays.asList(PRODUCT1, PRODUCT2);
 
     public static final MenuGroup MENU_GROUP1 = MenuGroup.builder()
         .id(1L)
@@ -29,7 +27,6 @@ public class Fixture {
         .id(2L)
         .name("자신메뉴")
         .build();
-    public static final List<MenuGroup> MENU_GROUPS = Arrays.asList(MENU_GROUP1, MENU_GROUP2);
 
     public static final MenuProduct MENU_PRODUCT1 = MenuProduct.builder()
         .seq(1L)

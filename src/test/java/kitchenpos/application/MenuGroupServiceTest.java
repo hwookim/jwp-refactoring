@@ -1,10 +1,11 @@
 package kitchenpos.application;
 
 import static kitchenpos.Fixture.MENU_GROUP1;
-import static kitchenpos.Fixture.MENU_GROUPS;
+import static kitchenpos.Fixture.MENU_GROUP2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
+import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
@@ -40,7 +41,7 @@ class MenuGroupServiceTest {
     @DisplayName("전체 메뉴 그룹 조회")
     @Test
     void list() {
-        given(menuGroupDao.findAll()).willReturn(MENU_GROUPS);
+        given(menuGroupDao.findAll()).willReturn(Arrays.asList(MENU_GROUP1, MENU_GROUP2));
         List<MenuGroup> menuGroups = menuGroupService.list();
 
         assertThat(menuGroups).hasSize(2);
