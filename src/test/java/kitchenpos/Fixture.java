@@ -1,11 +1,14 @@
 package kitchenpos;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 
 public class Fixture {
     public static final Product PRODUCT1 = Product.builder()
@@ -56,4 +59,18 @@ public class Fixture {
         .menuProducts(Arrays.asList(MENU_PRODUCT1, MENU_PRODUCT2))
         .build();
 
+    public static final OrderTable TABLE1 = OrderTable.builder()
+        .id(1L)
+        .empty(true)
+        .build();
+    public static final OrderTable TABLE2 = OrderTable.builder()
+        .id(2L)
+        .empty(true)
+        .build();
+
+    public static final TableGroup TABLE_GROUP = TableGroup.builder()
+        .id(1L)
+        .orderTables(Arrays.asList(TABLE1, TABLE2))
+        .createdDate(LocalDateTime.now())
+        .build();
 }
