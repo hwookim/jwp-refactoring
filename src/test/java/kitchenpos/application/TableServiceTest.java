@@ -1,10 +1,12 @@
 package kitchenpos.application;
 
 import static kitchenpos.Fixture.TABLE1;
+import static kitchenpos.Fixture.TABLE2;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
+import java.util.Arrays;
+import java.util.List;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
@@ -35,5 +37,14 @@ class TableServiceTest {
         OrderTable savedTable = tableService.create(table);
 
         assertThat(savedTable.getId()).isNotNull();
+    }
+
+    @DisplayName("전체 테이블 조회")
+    @Test
+    void list() {
+        given(tableDao.findAll()).willReturn(Arrays.asList(TABLE1, TABLE2));
+        List<OrderTable> tables = tableService.list();
+
+        assertThat(tables).hasSize(2);
     }
 }
