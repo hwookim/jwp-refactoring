@@ -1,11 +1,12 @@
 package kitchenpos.application;
 
+import static kitchenpos.Fixture.PRODUCT1;
+import static kitchenpos.Fixture.PRODUCTS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
@@ -18,18 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
-
-    private static final Product PRODUCT1 = Product.builder()
-        .id(1L)
-        .name("강정치킨")
-        .price(BigDecimal.valueOf(17_000))
-        .build();
-    private static final Product PRODUCT2 = Product.builder()
-        .id(2L)
-        .name("치즈치킨")
-        .price(BigDecimal.valueOf(17_000))
-        .build();
-    private static final List<Product> PRODUCTS = Arrays.asList(PRODUCT1, PRODUCT2);
 
     @Mock
     private ProductDao productDao;

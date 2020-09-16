@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
+import static kitchenpos.Fixture.MENU_GROUP1;
+import static kitchenpos.Fixture.MENU_GROUPS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
@@ -16,16 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
-
-    private static final MenuGroup MENU_GROUP1 = MenuGroup.builder()
-        .id(1L)
-        .name("추천메뉴")
-        .build();
-    private static final MenuGroup MENU_GROUP2 = MenuGroup.builder()
-        .id(2L)
-        .name("자신메뉴")
-        .build();
-    private static final List<MenuGroup> MENU_GROUPS = Arrays.asList(MENU_GROUP1, MENU_GROUP2);
 
     @Mock
     private MenuGroupDao menuGroupDao;
