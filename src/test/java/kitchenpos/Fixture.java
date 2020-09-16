@@ -6,6 +6,9 @@ import java.util.Arrays;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -68,10 +71,20 @@ public class Fixture {
         .id(2L)
         .empty(true)
         .build();
+    public static final OrderTable NOT_EMPTY_TABLE = OrderTable.builder()
+        .id(3L)
+        .empty(false)
+        .build();
 
     public static final TableGroup TABLE_GROUP = TableGroup.builder()
         .id(1L)
         .orderTables(Arrays.asList(TABLE1, TABLE2))
         .createdDate(LocalDateTime.now())
+        .build();
+
+    public static final OrderLineItem ORDER_LINE_ITEM = OrderLineItem.builder()
+        .seq(1L)
+        .menuId(MENU1.getId())
+        .quantity(1)
         .build();
 }
