@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +24,12 @@ class ProductServiceTest {
         .name("강정치킨")
         .price(BigDecimal.valueOf(17_000))
         .build();
+    private static final Product 치즈치킨 = Product.builder()
+        .id(2L)
+        .name("치즈치킨")
+        .price(BigDecimal.valueOf(17_000))
+        .build();
+    private static final List<Product> PRODUCTS = Arrays.asList(강정치킨, 치즈치킨);
 
     @Mock
     private ProductDao productDao;
@@ -53,5 +61,14 @@ class ProductServiceTest {
 
         assertThatThrownBy(() -> productService.create(product))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("전체 상품 조회")
+    @Test
+    void list() {
+        given(productDao.findAll()).willReturn(PRODUCTS);
+        List<Product> products = productService.list();
+
+        assertThat(products).hasSize(2);
     }
 }
