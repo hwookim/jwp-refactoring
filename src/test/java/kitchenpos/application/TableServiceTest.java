@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static kitchenpos.Fixture.TABLE1;
 import static kitchenpos.Fixture.TABLE2;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 import java.util.Arrays;
@@ -70,5 +71,40 @@ class TableServiceTest {
 
         OrderTable changedTable = tableService.changeEmpty(TABLE1.getId(), table);
         assertThat(changedTable.isEmpty()).isFalse();
+    }
+
+    @DisplayName("[예외] 그룹에 속한 테이블의 주문 등록 불가 여부 변경")
+    @Test
+    void changeEmpty_Fail_With_GroupedTable() {
+        OrderTable groupedTable = OrderTable.builder()
+            .id(1L)
+            .tableGroupId(1L)
+            .empty(true)
+            .build();
+
+        OrderTable table = OrderTable.builder()
+            .empty(false)
+            .build();
+
+        given(tableDao.findById(groupedTable.getId())).willReturn(Optional.of(groupedTable));
+        assertThatThrownBy(() -> tableService.changeEmpty(groupedTable.getId(), table))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("[예외] 조리, 식사가 진행 중인 테이블의 주문 등록 불가 여부 변경")
+    @Test
+    void changeEmpty_Fail_With_TableInProgress() {
+        OrderTable table = OrderTable.builder()
+            .empty(false)
+            .build();
+
+        given(tableDao.findById(TABLE1.getId())).willReturn(Optional.of(TABLE1));
+
+        given(orderDao.existsByOrderTableIdAndOrderStatusIn(
+            TABLE1.getId(),
+            Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()
+            ))).willReturn(true);
+        assertThatThrownBy(() -> tableService.changeEmpty(TABLE1.getId(), table))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }
