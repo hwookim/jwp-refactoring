@@ -19,17 +19,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 
-    private static final Product 강정치킨 = Product.builder()
+    private static final Product PRODUCT1 = Product.builder()
         .id(1L)
         .name("강정치킨")
         .price(BigDecimal.valueOf(17_000))
         .build();
-    private static final Product 치즈치킨 = Product.builder()
+    private static final Product PRODUCT2 = Product.builder()
         .id(2L)
         .name("치즈치킨")
         .price(BigDecimal.valueOf(17_000))
         .build();
-    private static final List<Product> PRODUCTS = Arrays.asList(강정치킨, 치즈치킨);
+    private static final List<Product> PRODUCTS = Arrays.asList(PRODUCT1, PRODUCT2);
 
     @Mock
     private ProductDao productDao;
@@ -45,7 +45,7 @@ class ProductServiceTest {
             .price(BigDecimal.valueOf(17_000))
             .build();
 
-        given(productDao.save(product)).willReturn(강정치킨);
+        given(productDao.save(product)).willReturn(PRODUCT1);
         Product savedProduct = productService.create(product);
 
         assertThat(savedProduct.getId()).isNotNull();
