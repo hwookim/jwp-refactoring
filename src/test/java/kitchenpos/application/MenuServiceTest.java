@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
-import static kitchenpos.Fixture.MENU;
-import static kitchenpos.Fixture.MENU_PRODUCT;
+import static kitchenpos.Fixture.MENU1;
+import static kitchenpos.Fixture.MENU2;
+import static kitchenpos.Fixture.MENU_PRODUCT1;
 import static kitchenpos.Fixture.PRODUCT1;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
@@ -60,10 +62,26 @@ class MenuServiceTest {
 
         given(menuGroupDao.existsById(anyLong())).willReturn(true);
         given(productDao.findById(anyLong())).willReturn(Optional.of(PRODUCT1));
-        given(menuDao.save(menu)).willReturn(MENU);
-        given(menuProductDao.save(menuProduct)).willReturn(MENU_PRODUCT);
+        given(menuDao.save(menu)).willReturn(MENU1);
+        given(menuProductDao.save(menuProduct)).willReturn(MENU_PRODUCT1);
         Menu savedMenu = menuService.create(menu);
 
         assertThat(savedMenu.getId()).isNotNull();
+    }
+
+    @DisplayName("전체 메뉴 조회")
+    @Test
+    void list() {
+        given(menuDao.findAll()).willReturn(Arrays.asList(MENU1, MENU2));
+        given(menuProductDao.findAllByMenuId(anyLong()))
+            .willReturn(MENU1.getMenuProducts());
+        given(menuProductDao.findAllByMenuId(anyLong()))
+            .willReturn(MENU2.getMenuProducts());
+        List<Menu> menus = menuService.list();
+
+        assertAll(
+            () -> assertThat(menus).hasSize(2),
+            () -> assertThat(menus.get(1).getMenuProducts()).hasSize(2)
+        );
     }
 }
