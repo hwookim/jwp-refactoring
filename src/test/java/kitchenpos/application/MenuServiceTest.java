@@ -5,6 +5,7 @@ import static kitchenpos.Fixture.MENU2;
 import static kitchenpos.Fixture.MENU_PRODUCT1;
 import static kitchenpos.Fixture.PRODUCT1;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -67,6 +68,69 @@ class MenuServiceTest {
         Menu savedMenu = menuService.create(menu);
 
         assertThat(savedMenu.getId()).isNotNull();
+    }
+
+    @DisplayName("[예외] 가격이 0 미만인 메뉴 추가")
+    @Test
+    void create_Fail_With_NegativePrice() {
+        MenuProduct menuProduct = MenuProduct.builder()
+            .productId(1L)
+            .quantity(2)
+            .build();
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
+
+        Menu menu = Menu.builder()
+            .name("강정치킨")
+            .price(BigDecimal.valueOf(-1))
+            .menuGroupId(1L)
+            .menuProducts(menuProducts)
+            .build();
+
+        assertThatThrownBy(() -> menuService.create(menu))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("[예외] 가격이 모든 메뉴 상품의 가격 총합보다 큰 메뉴 추가")
+    @Test
+    void create_Fail_With_NotExistMenuGroup() {
+        MenuProduct menuProduct = MenuProduct.builder()
+            .productId(1L)
+            .quantity(2)
+            .build();
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
+
+        Menu menu = Menu.builder()
+            .name("강정치킨")
+            .price(BigDecimal.valueOf(30_000))
+            .menuGroupId(10L)
+            .menuProducts(menuProducts)
+            .build();
+
+        given(menuGroupDao.existsById(anyLong())).willReturn(false);
+        assertThatThrownBy(() -> menuService.create(menu))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("[예외] 가격이 모든 메뉴 상품의 가격 총합보다 큰 메뉴 추가")
+    @Test
+    void create_Fail_With_OverPrice() {
+        MenuProduct menuProduct = MenuProduct.builder()
+            .productId(1L)
+            .quantity(2)
+            .build();
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
+
+        Menu menu = Menu.builder()
+            .name("강정치킨")
+            .price(BigDecimal.valueOf(100_000))
+            .menuGroupId(1L)
+            .menuProducts(menuProducts)
+            .build();
+
+        given(menuGroupDao.existsById(anyLong())).willReturn(true);
+        given(productDao.findById(anyLong())).willReturn(Optional.of(PRODUCT1));
+        assertThatThrownBy(() -> menuService.create(menu))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("전체 메뉴 조회")
