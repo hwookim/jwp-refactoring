@@ -11,8 +11,12 @@ import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -24,6 +28,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
+
+    @Mock
+    private OrderDao orderDao;
 
     @Mock
     private OrderTableDao tableDao;
@@ -111,5 +118,32 @@ class TableGroupServiceTest {
         given(tableDao.findAllByIdIn(any())).willReturn(Arrays.asList(TABLE1, OTHERS_TABLE));
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("테이블 그룹 해제")
+    @Test
+    void ungroup() {
+        List<OrderTable> tables = TABLE_GROUP.getOrderTables();
+        given(tableDao.findAllByTableGroupId(TABLE_GROUP.getId()))
+            .willReturn(tables);
+
+        List<Long> orderTableIds = tables.stream()
+            .map(OrderTable::getId)
+            .collect(Collectors.toList());
+        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
+            orderTableIds,
+            Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+            .willReturn(false);
+
+        given(tableDao.save(TABLE1)).willReturn(TABLE1);
+        given(tableDao.save(TABLE2)).willReturn(TABLE2);
+        tableGroupService.ungroup(TABLE_GROUP.getId());
+
+        assertAll(
+            () -> assertThat(tables.get(0).getTableGroupId()).isNull(),
+            () -> assertThat(tables.get(1).getTableGroupId()).isNull(),
+            () -> assertThat(tables.get(0).isEmpty()).isFalse(),
+            () -> assertThat(tables.get(1).isEmpty()).isFalse()
+        );
     }
 }
