@@ -146,4 +146,23 @@ class TableGroupServiceTest {
             () -> assertThat(tables.get(1).isEmpty()).isFalse()
         );
     }
+
+
+    @DisplayName("[예외] 조리, 식사가 진행 중인 테이블을 포함한 테이블 그룹 해제")
+    @Test
+    void ungroup_Fail_With_TableInProgress() {
+        List<OrderTable> tables = TABLE_GROUP.getOrderTables();
+        given(tableDao.findAllByTableGroupId(TABLE_GROUP.getId()))
+            .willReturn(tables);
+
+        List<Long> orderTableIds = tables.stream()
+            .map(OrderTable::getId)
+            .collect(Collectors.toList());
+        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
+            orderTableIds,
+            Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+            .willReturn(true);
+        assertThatThrownBy(() -> tableGroupService.ungroup(TABLE_GROUP.getId()))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
 }
