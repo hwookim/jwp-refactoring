@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderTable {
+
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;

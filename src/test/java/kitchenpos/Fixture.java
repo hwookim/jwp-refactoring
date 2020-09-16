@@ -11,6 +11,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 
 public class Fixture {
+
     public static final Product PRODUCT1 = Product.builder()
         .id(1L)
         .name("강정치킨")

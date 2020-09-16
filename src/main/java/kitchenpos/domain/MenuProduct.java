@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MenuProduct {
+
     private Long seq;
     private Long menuId;
     private Long productId;

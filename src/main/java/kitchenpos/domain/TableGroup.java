@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TableGroup {
+
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;

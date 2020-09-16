@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Menu {
+
     private Long id;
     private String name;
     private BigDecimal price;
