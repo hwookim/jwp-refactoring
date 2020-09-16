@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.Fixture.NOT_EMPTY_TABLE;
 import static kitchenpos.Fixture.TABLE1;
 import static kitchenpos.Fixture.TABLE2;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -106,5 +107,19 @@ class TableServiceTest {
             ))).willReturn(true);
         assertThatThrownBy(() -> tableService.changeEmpty(TABLE1.getId(), table))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("손님 수 변경")
+    @Test
+    void changeNumberOfGuests() {
+        OrderTable table = OrderTable.builder()
+            .numberOfGuests(10)
+            .build();
+
+        given(tableDao.findById(NOT_EMPTY_TABLE.getId())).willReturn(Optional.of(NOT_EMPTY_TABLE));
+        given(tableDao.save(NOT_EMPTY_TABLE)).willReturn(NOT_EMPTY_TABLE);
+        OrderTable changedTable = tableService.changeNumberOfGuests(NOT_EMPTY_TABLE.getId(), table);
+
+        assertThat(changedTable.getNumberOfGuests()).isEqualTo(10);
     }
 }
