@@ -68,10 +68,6 @@ public class Fixture {
         .id(2L)
         .empty(true)
         .build();
-    public static final OrderTable NOT_EMPTY_TABLE = OrderTable.builder()
-        .id(3L)
-        .empty(false)
-        .build();
 
     public static final TableGroup TABLE_GROUP = TableGroup.builder()
         .id(1L)

@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.Fixture.NOT_EMPTY_TABLE;
 import static kitchenpos.Fixture.TABLE1;
 import static kitchenpos.Fixture.TABLE2;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,17 +59,21 @@ class TableServiceTest {
     @Test
     void changeEmpty() {
         OrderTable table = OrderTable.builder()
+            .id(1L)
+            .empty(true)
+            .build();
+        OrderTable targetTable = OrderTable.builder()
             .empty(false)
             .build();
 
-        given(tableDao.findById(TABLE1.getId())).willReturn(Optional.of(TABLE1));
+        given(tableDao.findById(table.getId())).willReturn(Optional.of(table));
         given(orderDao.existsByOrderTableIdAndOrderStatusIn(
-            TABLE1.getId(),
+            table.getId(),
             Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()
-        ))).willReturn(false);
-        given(tableDao.save(TABLE1)).willReturn(TABLE1);
+            ))).willReturn(false);
+        given(tableDao.save(table)).willReturn(table);
 
-        OrderTable changedTable = tableService.changeEmpty(TABLE1.getId(), table);
+        OrderTable changedTable = tableService.changeEmpty(table.getId(), targetTable);
         assertThat(changedTable.isEmpty()).isFalse();
     }
 
@@ -112,14 +115,42 @@ class TableServiceTest {
     @DisplayName("손님 수 변경")
     @Test
     void changeNumberOfGuests() {
+        OrderTable notEmptyTable = OrderTable.builder()
+            .id(3L)
+            .empty(false)
+            .build();
+        OrderTable targetTable = OrderTable.builder()
+            .numberOfGuests(10)
+            .build();
+
+        given(tableDao.findById(notEmptyTable.getId())).willReturn(Optional.of(notEmptyTable));
+        given(tableDao.save(notEmptyTable)).willReturn(notEmptyTable);
+        OrderTable changedTable = tableService
+            .changeNumberOfGuests(notEmptyTable.getId(), targetTable);
+
+        assertThat(changedTable.getNumberOfGuests()).isEqualTo(10);
+    }
+
+    @DisplayName("[예외] 0미만의 손님 수 변경")
+    @Test
+    void changeNumberOfGuests_With_LessNumberOfGuests() {
+        OrderTable table = OrderTable.builder()
+            .numberOfGuests(-1)
+            .build();
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(TABLE1.getId(), table))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("[예외] 빈 테이블 손님 수 변경")
+    @Test
+    void changeNumberOfGuests_With_EmptyTable() {
         OrderTable table = OrderTable.builder()
             .numberOfGuests(10)
             .build();
 
-        given(tableDao.findById(NOT_EMPTY_TABLE.getId())).willReturn(Optional.of(NOT_EMPTY_TABLE));
-        given(tableDao.save(NOT_EMPTY_TABLE)).willReturn(NOT_EMPTY_TABLE);
-        OrderTable changedTable = tableService.changeNumberOfGuests(NOT_EMPTY_TABLE.getId(), table);
-
-        assertThat(changedTable.getNumberOfGuests()).isEqualTo(10);
+        given(tableDao.findById(TABLE1.getId())).willReturn(Optional.of(TABLE1));
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(TABLE1.getId(), table))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }
