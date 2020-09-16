@@ -7,7 +7,10 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,10 +23,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TableServiceTest {
 
     @Mock
-    OrderTableDao tableDao;
+    private OrderDao orderDao;
+
+    @Mock
+    private OrderTableDao tableDao;
 
     @InjectMocks
-    TableService tableService;
+    private TableService tableService;
 
     @DisplayName("테이블 추가")
     @Test
@@ -46,5 +52,23 @@ class TableServiceTest {
         List<OrderTable> tables = tableService.list();
 
         assertThat(tables).hasSize(2);
+    }
+
+    @DisplayName("주문 등록 불가 여부 변경")
+    @Test
+    void changeEmpty() {
+        OrderTable table = OrderTable.builder()
+            .empty(false)
+            .build();
+
+        given(tableDao.findById(TABLE1.getId())).willReturn(Optional.of(TABLE1));
+        given(orderDao.existsByOrderTableIdAndOrderStatusIn(
+            TABLE1.getId(),
+            Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()
+        ))).willReturn(false);
+        given(tableDao.save(TABLE1)).willReturn(TABLE1);
+
+        OrderTable changedTable = tableService.changeEmpty(TABLE1.getId(), table);
+        assertThat(changedTable.isEmpty()).isFalse();
     }
 }
