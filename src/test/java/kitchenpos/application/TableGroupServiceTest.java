@@ -5,6 +5,7 @@ import static kitchenpos.Fixture.TABLE2;
 import static kitchenpos.Fixture.TABLE_GROUP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -45,7 +46,11 @@ class TableGroupServiceTest {
         given(tableGroupDao.save(tableGroup)).willReturn(TABLE_GROUP);
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
-        assertThat(savedTableGroup.getId()).isNotNull();
+        assertAll(
+            () -> assertThat(savedTableGroup.getId()).isNotNull(),
+            () -> assertThat(savedTableGroup.getOrderTables().get(0).isEmpty()).isFalse(),
+            () -> assertThat(savedTableGroup.getOrderTables().get(1).isEmpty()).isFalse()
+        );
     }
 
     @DisplayName("[예외] 2개 미만의 테이블을 포함한 테이블 그룹 추가")
