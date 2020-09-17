@@ -1,10 +1,13 @@
 package kitchenpos.application;
 
+import static kitchenpos.Fixture.MENU1;
 import static kitchenpos.Fixture.NOT_EMPTY_TABLE;
 import static kitchenpos.Fixture.ORDER1;
 import static kitchenpos.Fixture.ORDER2;
 import static kitchenpos.Fixture.ORDER_LINE_ITEM;
+import static kitchenpos.Fixture.TABLE1;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
 
@@ -49,12 +52,12 @@ class OrderServiceTest {
     @Test
     void create() {
         OrderLineItem orderLineItem = OrderLineItem.builder()
-            .menuId(1L)
+            .menuId(MENU1.getId())
             .quantity(1)
             .build();
 
         Order order = Order.builder()
-            .orderTableId(3L)
+            .orderTableId(NOT_EMPTY_TABLE.getId())
             .orderLineItems(Arrays.asList(orderLineItem))
             .orderedTime(LocalDateTime.now())
             .build();
@@ -81,6 +84,67 @@ class OrderServiceTest {
             () -> assertThat(createdOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
             () -> assertThat(createdOrder.getOrderLineItems().get(0).getSeq()).isNotNull()
         );
+    }
+
+    @DisplayName("[예외] 주문 항목이 없는 주문 추가")
+    @Test
+    void create_Fail_With_LessOrderItem() {
+        Order order = Order.builder()
+            .orderTableId(NOT_EMPTY_TABLE.getId())
+            .orderedTime(LocalDateTime.now())
+            .build();
+
+        assertThatThrownBy(() -> orderService.create(order))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("[예외] 존재하지 않는 메뉴를 포함한 주문 추가")
+    @Test
+    void create_Fail_With_NotExistMenu() {
+        OrderLineItem orderLineItem = OrderLineItem.builder()
+            .menuId(100L)
+            .quantity(1)
+            .build();
+
+        Order order = Order.builder()
+            .orderTableId(NOT_EMPTY_TABLE.getId())
+            .orderLineItems(Arrays.asList(orderLineItem))
+            .orderedTime(LocalDateTime.now())
+            .build();
+
+        List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+        List<Long> menuIds = orderLineItems.stream()
+            .map(OrderLineItem::getMenuId)
+            .collect(Collectors.toList());
+        given(menuDao.countByIdIn(menuIds)).willReturn(0L);
+
+        assertThatThrownBy(() -> orderService.create(order))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("[예외] 빈 테이블을 포함한 주문 추가")
+    @Test
+    void create_Fail_With_EmptyTable() {
+        OrderLineItem orderLineItem = OrderLineItem.builder()
+            .menuId(MENU1.getId())
+            .quantity(1)
+            .build();
+
+        Order order = Order.builder()
+            .orderTableId(TABLE1.getId())
+            .orderLineItems(Arrays.asList(orderLineItem))
+            .orderedTime(LocalDateTime.now())
+            .build();
+
+        List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+        List<Long> menuIds = orderLineItems.stream()
+            .map(OrderLineItem::getMenuId)
+            .collect(Collectors.toList());
+        given(menuDao.countByIdIn(menuIds)).willReturn(1L);
+        given(tableDao.findById(order.getOrderTableId())).willReturn(Optional.of(TABLE1));
+
+        assertThatThrownBy(() -> orderService.create(order))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("전체 주문 조회")
