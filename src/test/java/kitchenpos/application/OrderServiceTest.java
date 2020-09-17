@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
 import static kitchenpos.Fixture.NOT_EMPTY_TABLE;
+import static kitchenpos.Fixture.ORDER1;
+import static kitchenpos.Fixture.ORDER2;
 import static kitchenpos.Fixture.ORDER_LINE_ITEM;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -79,5 +81,14 @@ class OrderServiceTest {
             () -> assertThat(createdOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
             () -> assertThat(createdOrder.getOrderLineItems().get(0).getSeq()).isNotNull()
         );
+    }
+
+    @DisplayName("전체 주문 조회")
+    @Test
+    void list() {
+        given(orderService.list()).willReturn(Arrays.asList(ORDER1, ORDER2));
+        List<Order> orders = orderService.list();
+
+        assertThat(orders).hasSize(2);
     }
 }

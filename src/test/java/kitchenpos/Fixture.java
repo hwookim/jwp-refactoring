@@ -87,4 +87,19 @@ public class Fixture {
         .menuId(MENU1.getId())
         .quantity(1)
         .build();
+
+    public static final Order ORDER1 = Order.builder()
+        .id(1L)
+        .orderTableId(NOT_EMPTY_TABLE.getId())
+        .orderLineItems(Arrays.asList(ORDER_LINE_ITEM))
+        .orderStatus(OrderStatus.COOKING.name())
+        .orderedTime(LocalDateTime.now())
+        .build();
+    public static final Order ORDER2 = Order.builder()
+        .id(2L)
+        .orderTableId(NOT_EMPTY_TABLE.getId())
+        .orderLineItems(Arrays.asList(ORDER_LINE_ITEM))
+        .orderStatus(OrderStatus.COOKING.name())
+        .orderedTime(LocalDateTime.now())
+        .build();
 }
