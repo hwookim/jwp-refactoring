@@ -52,14 +52,14 @@ public class Fixture {
         .id(1L)
         .name("강정치킨")
         .price(BigDecimal.valueOf(30_000))
-        .menuGroupId(1L)
+        .menuGroupId(MENU_GROUP1.getId())
         .menuProducts(Arrays.asList(MENU_PRODUCT1))
         .build();
     public static final Menu MENU2 = Menu.builder()
         .id(2L)
         .name("강정치즈치킨")
         .price(BigDecimal.valueOf(30_000))
-        .menuGroupId(1L)
+        .menuGroupId(MENU_GROUP1.getId())
         .menuProducts(Arrays.asList(MENU_PRODUCT1, MENU_PRODUCT2))
         .build();
 
