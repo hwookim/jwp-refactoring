@@ -176,4 +176,23 @@ class OrderServiceTest {
 
         assertThat(changedOrder.getOrderStatus()).isEqualTo(targetOrder.getOrderStatus());
     }
+
+    @DisplayName("[예외] 이미 완료된 주문의 상태 변경")
+    @Test
+    void changeOrderStatus_Fail_With_Completion() {
+        Order order = Order.builder()
+            .id(3L)
+            .orderTableId(NOT_EMPTY_TABLE.getId())
+            .orderLineItems(Arrays.asList(ORDER_LINE_ITEM))
+            .orderStatus(OrderStatus.COMPLETION.name())
+            .orderedTime(LocalDateTime.now())
+            .build();
+        Order targetOrder = Order.builder()
+            .orderStatus(OrderStatus.MEAL.name())
+            .build();
+
+        given(orderDao.findById(order.getId())).willReturn(Optional.of(order));
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), targetOrder))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
 }
