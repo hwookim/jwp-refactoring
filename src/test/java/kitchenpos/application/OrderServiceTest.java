@@ -155,4 +155,25 @@ class OrderServiceTest {
 
         assertThat(orders).hasSize(2);
     }
+
+    @DisplayName("주문 상태 변경")
+    @Test
+    void changeOrderStatus() {
+        Order order = Order.builder()
+            .id(3L)
+            .orderTableId(NOT_EMPTY_TABLE.getId())
+            .orderLineItems(Arrays.asList(ORDER_LINE_ITEM))
+            .orderStatus(OrderStatus.COOKING.name())
+            .orderedTime(LocalDateTime.now())
+            .build();
+        Order targetOrder = Order.builder()
+            .orderStatus(OrderStatus.MEAL.name())
+            .build();
+
+        given(orderDao.findById(order.getId())).willReturn(Optional.of(order));
+        given(orderDao.save(order)).willReturn(order);
+        Order changedOrder = orderService.changeOrderStatus(order.getId(), targetOrder);
+
+        assertThat(changedOrder.getOrderStatus()).isEqualTo(targetOrder.getOrderStatus());
+    }
 }
