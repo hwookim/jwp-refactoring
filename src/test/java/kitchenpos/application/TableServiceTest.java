@@ -67,11 +67,7 @@ class TableServiceTest {
     @DisplayName("[예외] 존재하지 않는 테이블의 주문 등록 불가 여부 변경")
     @Test
     void changeEmpty_Fail_With_NotExistTable() {
-        OrderTable notSavedTable = OrderTable.builder()
-            .id(1000L)
-            .numberOfGuests(0)
-            .empty(false)
-            .build();
+        OrderTable notSavedTable = createTable(1000L, false);
         OrderTable targetTable = createTable(false);
 
         assertThatThrownBy(() -> tableService.changeEmpty(notSavedTable.getId(), targetTable))
@@ -142,11 +138,7 @@ class TableServiceTest {
     @DisplayName("[예외] 존재하지 않는 테이블의 손님 수 변경")
     @Test
     void changeNumberOfGuests_Fail_With_NotExistTable() {
-        OrderTable notSavedTable = OrderTable.builder()
-            .id(1000L)
-            .numberOfGuests(0)
-            .empty(false)
-            .build();
+        OrderTable notSavedTable = createTable(1000L, false);
 
         OrderTable targetTable = OrderTable.builder()
             .numberOfGuests(10)

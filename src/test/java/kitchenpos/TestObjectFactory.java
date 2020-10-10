@@ -25,11 +25,7 @@ public class TestObjectFactory {
     }
 
     public static Order createOrder(OrderTable table) {
-        return Order.builder()
-            .orderTable(table)
-            .orderStatus(OrderStatus.COOKING.name())
-            .orderedTime(LocalDateTime.now())
-            .build();
+        return createOrder(table, null);
     }
 
     public static OrderLineItem createOrderLineItem(Menu menu) {
@@ -48,10 +44,15 @@ public class TestObjectFactory {
             .build();
     }
 
-    public static MenuGroup createMenuGroup(String name) {
+    public static MenuGroup createMenuGroup(Long id, String name) {
         return MenuGroup.builder()
+            .id(id)
             .name(name)
             .build();
+    }
+
+    public static MenuGroup createMenuGroup(String name) {
+        return createMenuGroup(null, name);
     }
 
     public static MenuProduct createMenuProduct(Product product) {
@@ -61,11 +62,16 @@ public class TestObjectFactory {
             .build();
     }
 
-    public static Product createProduct(int price) {
+    public static Product createProduct(Long id, int price) {
         return Product.builder()
+            .id(id)
             .name("강정치킨")
             .price(BigDecimal.valueOf(price))
             .build();
+    }
+
+    public static Product createProduct(int price) {
+        return createProduct(null, price);
     }
 
     public static TableGroup createTableGroup(List<OrderTable> tables) {
@@ -75,10 +81,15 @@ public class TestObjectFactory {
             .build();
     }
 
-    public static OrderTable createTable(boolean empty) {
+    public static OrderTable createTable(Long id, boolean empty) {
         return OrderTable.builder()
+            .id(id)
             .numberOfGuests(0)
             .empty(empty)
             .build();
+    }
+
+    public static OrderTable createTable(boolean empty) {
+        return createTable(null, empty);
     }
 }

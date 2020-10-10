@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static kitchenpos.TestObjectFactory.createMenuGroup;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -46,10 +47,7 @@ class MenuGroupRestControllerTest {
     @DisplayName("POST " + URL)
     @Test
     void create() throws Exception {
-        MenuGroup menuGroup = MenuGroup.builder()
-            .id(0L)
-            .name("추천메뉴")
-            .build();
+        MenuGroup menuGroup = createMenuGroup(0L, "추천메뉴");
         String request = objectMapper.writeValueAsString(menuGroup);
 
         given(menuGroupService.create(any())).willReturn(menuGroup);
